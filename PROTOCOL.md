@@ -28,7 +28,7 @@ Let `credential_id` and `public_key` be the parts of the `auth_data`
 object's attested credential data as byte strings.  Then:
 
 1. Verify that `public_key` is a CBOR dictionary.  Subscripts in the
-   sequel will denote dictoinary lookup.
+   sequel will denote dictionary lookup.
 2. Verify that `public_key` has exactly the integer keys:
    - `1` (kty)
    - `3` (alg)
@@ -42,10 +42,10 @@ object's attested credential data as byte strings.  Then:
 7. Verify that `public_key[-3]` is a byte string.  (XXX length?)
 
 Next, compute a 32-byte string `key` by the SHA-256 hash of the
-US-ASCII encoding of `FIDOKDF0' followed by `public_key`.  Let
-`ciphertext` be the authenticated encryption of the payload under `key`
-with header `public_key` using the deterministic authenticated cipher
-ChaCha20-HMACSHA256-SIV defined below.
+US-ASCII encoding of the string `FIDOKDF0` followed by the bytes of
+`public_key`.  Let `ciphertext` be the authenticated encryption of the
+payload under `key` with header `public_key` using the deterministic
+authenticated cipher ChaCha20-HMACSHA256-SIV defined below.
 
 Finally, erase `client_data`, `attestation_object`, and `auth_data`,
 and return a dictionary mapping `credential_id` to `ciphertext` as a
@@ -78,12 +78,12 @@ message, yielding two candidate ECDSA public keys (curve points).
 
 Next, for each of the two ECDSA public keys in any order, let
 `public_key` be its canonical CBOR COSE encoding, and compute a 32-byte
-string `key` by the SHA-256 hash of the US-ASCII encoding of `FIDOKDF0`
-followed by `public_key`.  Let `payload` be the authenticated
-decryption of the ciphertext under `key` with header `public_key` using
-the deterministic authenticated cipher ChaCha-HMACSHA256-SIV defined
-below, or reject this public key if it fails.  If both public keys
-fail, and refuse signin.
+string `key` by the SHA-256 hash of the US-ASCII encoding of the string
+`FIDOKDF0` followed by the bytes of `public_key`.  Let `payload` be the
+authenticated decryption of the ciphertext under `key` with header
+`public_key` using the deterministic authenticated cipher
+ChaCha-HMACSHA256-SIV defined below, or reject this public key if it
+fails.  If both public keys fail, and refuse signin.
 
 Finally, using the public key for which decryption succeeded, proceed
 to standard webauthn authentication completion (verifying the

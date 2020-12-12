@@ -218,8 +218,9 @@ of the user's device has limited opportunities to repeat measurements
 to refine a statistical model of the secrets -- it's only when the user
 chooses to sign in.
 
-So although you should generally be concerned about side channels --
-and you might rightly choose a different implementation of fidocrypt on
-the basis of that -- you can still use fidocrypt as a factor in a
-multifactor system, combining the secret with others (say) derived from
-the user's password, to raise the difficulty for the adversary.
+Timing side channel attacks are serious, and you might rightly choose a
+different implementation of fidocrypt on the basis of them.
+Nevertheless, you can still use fidocrypt as a factor in a multifactor
+system, combining the secret with others (say) derived from the user's
+password, to raise the difficulty for the adversary -- especially if
+users are already using U2F as a second factor to sign in anyway.
