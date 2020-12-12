@@ -10,6 +10,9 @@ secret, and as long as the U2F device isn't badly designed (see below
 on security), the secret cannot be retrieved again except by
 U2F/FIDO/webauthn signin with the device.
 
+- **WARNING: Fidocrypt is new and has had little scrutiny.  There may
+  be security issues.  Caveat lector.**
+
 For example, if a server holds the share of a key to encrypt a user's
 password vault, you might store this share as the fidocrypt secret --
 and store the _same_ share with every credential registered by the
@@ -161,6 +164,8 @@ payload = server.authenticate_complete_decrypt(
 Security
 --------
 
+### Device security
+
 On most U2F devices, the public key is effectively a pseudorandom
 function (with nonuniform distribution) of the credential id.
 Typically, the credential id (or key handle, in the older U2F
@@ -199,3 +204,22 @@ software storage device or similar.
   [solokeys-keyload1]: https://github.com/solokeys/solo/blob/8b91ec7c538d0d071842e0b86ef94266936ab1d7/fido2/u2f.c#L250-L252
   [solokeys-keyload2]: https://github.com/solokeys/solo/blob/8b91ec7c538d0d071842e0b86ef94266936ab1d7/fido2/u2f.c#L164-L168
   [solokeys-keyload3]: https://github.com/solokeys/solo/blob/8b91ec7c538d0d071842e0b86ef94266936ab1d7/fido2/crypto.c#L210-L216
+
+### Side channels
+
+The ECDSA public key recovery in this implementation of fidocrypt is
+computed in Python with variable-time arbitrary-precision integer
+arithmetic.  Such an approach is obviously suboptimal, and certainly
+could be a vector for timing side channel attacks.
+
+The side channel is weakly mitigated because the vulnerable arithmetic
+is computed only once during login.  Thus, an adversary not in control
+of the user's device has limited opportunities to repeat measurements
+to refine a statistical model of the secrets -- it's only when the user
+chooses to sign in.
+
+So although you should generally be concerned about side channels --
+and you might rightly choose a different implementation of fidocrypt on
+the basis of that -- you can still use fidocrypt as a factor in a
+multifactor system, combining the secret with others (say) derived from
+the user's password, to raise the difficulty for the adversary.
