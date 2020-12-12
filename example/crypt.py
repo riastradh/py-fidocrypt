@@ -56,14 +56,12 @@ def verify_origin(rp_id, origin):
     if isinstance(rp_id, six.binary_type):
         rp_id = rp_id.decode()
     if not rp_id:
-        sys.stderr.write('no rp_id %r\n' % (rp_id,))
         return False
     if isinstance(origin, six.binary_type):
         origin = origin.decode()
 
     url = urlparse(origin)
     if url.scheme != SCHEME:
-        sys.stderr.write('bad scheme %r\n' % (url.scheme,))
         return False
     if url.hostname == rp_id:
         return True
