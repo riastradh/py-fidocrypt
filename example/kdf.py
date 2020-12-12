@@ -44,11 +44,11 @@ def iterdevs(per_device):
 public_suffixes = set()
 
 
-SCHEME = 'fidokdf'
+SCHEME = 'test-fidokdf'
 
 
 def fidokdf_origin(rp_id):
-    return 'fidokdf://' + rp_id
+    return 'test-fidokdf://' + rp_id
 
 
 def verify_origin(rp_id, origin):

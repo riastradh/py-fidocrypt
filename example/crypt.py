@@ -45,11 +45,11 @@ def iterdevs(per_device):
 public_suffixes = set()
 
 
-SCHEME = 'fidocrypt'
+SCHEME = 'test-fidocrypt'
 
 
 def fidocrypt_origin(rp_id):
-    return 'fidocrypt://' + rp_id
+    return 'test-fidocrypt://' + rp_id
 
 
 def verify_origin(rp_id, origin):
