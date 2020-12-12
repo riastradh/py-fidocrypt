@@ -25,9 +25,10 @@ from six.moves.urllib.parse import urlparse
 
 from fidocrypt.cryptserver import Fido2CryptServer
 from fido2.client import Fido2Client
+from fido2.ctap2 import AttestationObject
+from fido2.attestation import NoneAttestation
 from fido2.hid import CtapHidDevice
 from fido2.hid import STATUS
-from fido2.webauthn import AttestationConveyancePreference
 from fido2.webauthn import PublicKeyCredentialDescriptor
 from fido2.webauthn import PublicKeyCredentialType
 from fido2.webauthn import UserVerificationRequirement
@@ -77,7 +78,6 @@ def rp_origin_verifier(rp_id):
 def _fidocrypt_server(rp):
     return Fido2CryptServer(
         rp,
-        attestation=AttestationConveyancePreference.DIRECT,
         verify_origin=rp_origin_verifier(rp['id']),
     )
 
@@ -118,6 +118,13 @@ def encrypt(payload, rp, user, exclude_credential_ids=set(), prompt=None):
         )
 
     attestation_object, client_data = iterdevs(per_device)
+
+    # Strip out the device attestation for privacy.
+    attestation_object = AttestationObject.create(
+        NoneAttestation.FORMAT,
+        attestation_object.auth_data,
+        {},
+    )
 
     return server.register_complete_encrypt(
         state, payload, client_data, attestation_object
