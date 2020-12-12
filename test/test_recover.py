@@ -14,6 +14,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import base64
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -24,7 +25,18 @@ from fidocrypt._recover import ecdsa_recover_pubkey
 
 
 def test_golden():
-    pass                        # XXX
+    msg = b'hello world'
+    sig = base64.b64decode('''
+MEUCICDIiNtVPTEWzqpSWEdtVB3CFlicI1wJXM5VtShAtgj+AiEAyaHdpTMhW6RU6tV6/VWipPfP
+SlXakOq4Y68S7u8J6cM=
+''')
+    pkpos, pkneg = ecdsa_recover_pubkey(sig, msg, NISTP256, hashes.SHA256())
+    pkpos.verify(sig, msg, ec.ECDSA(hashes.SHA256()))
+    pkneg.verify(sig, msg, ec.ECDSA(hashes.SHA256()))
+    x = 0x23ebed13f555cb01c19e3bb1acd09e7d03f42bcd3c00b5240714bdcfc9a596d
+    y = 0xa4f2d67cf2aa26b56303c843668420c7ff90097fbd4a73af44885e1b14ae5c93
+    pkn = ec.EllipticCurvePublicNumbers(x, y, ec.SECP256R1())
+    assert pkpos.public_numbers() == pkn or pkneg.public_numbers() == pkn
 
 
 def test_random():
@@ -37,3 +49,5 @@ def test_random():
     pkpos, pkneg = ecdsa_recover_pubkey(sig, msg, NISTP256, hashes.SHA256())
     pkpos.verify(sig, msg, ec.ECDSA(hashes.SHA256()))
     pkneg.verify(sig, msg, ec.ECDSA(hashes.SHA256()))
+    assert pkpos.public_numbers() == pk.public_numbers() or \
+        pkneg.public_numbers() == pk.public_numbers()
