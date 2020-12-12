@@ -26,11 +26,11 @@ except ImportError:
 
 
 def get_version():
-    with open('VERSION', 'rb') as f:
-        version = f.read().strip().decode('utf8')
+    with open('VERSION', 'r') as f:
+        version = f.read().strip()
 
-    pkg_version = None
-    full_version = None
+    pkg_version = version
+    full_version = version
     if version.endswith('+'):
         import re
         import subprocess
@@ -47,8 +47,6 @@ def get_version():
             commitdirty = commitdirty.replace('-', '.')
             pkg_version = '%s.post%s' % (version, revision)
             full_version = '%s.post%s+%s' % (version, revision, commitdirty)
-    pkg_version = pkg_version or version
-    full_version = full_version or version
 
     assert '-' not in full_version, '%r' % (full_version,)
     assert '-' not in pkg_version, '%r' % (pkg_version,)
@@ -59,14 +57,14 @@ def get_version():
 
 def write_version_py(path):
     try:
-        with open(path, 'rb') as f:
-            old = f.read().decode('utf8')
+        with open(path, 'r') as f:
+            old = f.read()
     except IOError:
         old = None
     new = '__version__ = %r\n' % (full_version,)
     if old != new:
-        with open(path, 'wb') as f:
-            f.write(new.encode('utf8'))
+        with open(path, 'w') as f:
+            f.write(new)
 
 
 class local_build_py(build_py):
@@ -83,8 +81,8 @@ class local_sdist(sdist):
         print('updating %s' % (version_path,))
         # Write atomically and avoid rewriting the real one in place
         # because this may be a hard link.
-        with open(version_path + '.tmp', 'wb') as f:
-            f.write(b'%s\n' % (pkg_version.encode('utf8'),))
+        with open(version_path + '.tmp', 'w') as f:
+            f.write('%s\n' % (pkg_version,))
         os.rename(version_path + '.tmp', version_path)
 
 
