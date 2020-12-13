@@ -38,18 +38,10 @@ Credit: I first learned about this technique from Joseph Birr-Paxton's
 blog post on [abusing U2F to ‘store’
 keys](https://jbp.io/2015/11/23/abusing-u2f-to-store-keys.html).
 
-I then:
-
-- adapted it from U2F to webauthn;
-
-- tweaked it to verify the signature too so you get the same
-  authentication guarantees as standard webauthn (under standard
-  assumptions about SHA-256); and
-
-- tweaked it to store a secret with the credential that can be
-  decrypted with a key derived from the device, rather than just
-  exposing the key directly, so that you can store the _same_ secret
-  encrypted differently with many U2F devices.
+I tweaked it to store a secret with the credential that can be
+decrypted with a key derived from the device, rather than just exposing
+the key directly, so that you can easily store the _same_ secret
+encrypted differently with many U2F devices.
 
 Other implementations of the same basic idea:
 
@@ -62,7 +54,7 @@ Usage example
 Replace `fido2.server.Fido2Server` by
 `fidocrypt.cryptserver.Fido2CryptServer`:
 
-```
+```python
 from fidocrypt.cryptserver import Fido2CryptServer
 ```
 

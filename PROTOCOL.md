@@ -131,15 +131,10 @@ Given
 - a byte string `payload` (plaintext),
 
 compute `t = HMAC-SHA256_k(header || payload || len || 0)`, where `0`
-denotes a single zero byte, and `len` is
-
-```
-le64(nbytes(header)) || le64(nbytes(payload))
-```
-
-Here `le64` means the 8-byte little-endian encoding of an integer in
-the interval [0, 2^64), and `nbytes` means the number of bytes in a
-byte string.
+denotes a single zero byte, and `len` is `le64(nbytes(header)) ||
+le64(nbytes(payload))`.  Here `le64` means the 8-byte little-endian
+encoding of an integer in the interval [0, 2^64), and `nbytes` means
+the number of bytes in a byte string.
 
 Next, compute `k' = HMAC-SHA256_k(t || 1)`, where `1` denotes a single
 one byte, and encrypt `payload` with ChaCha20 under the key `k'` and a
@@ -165,11 +160,8 @@ with ChaCha20 under the key `k'` and a nonce of all zero bytes; let
 `payload` be the result.
 
 Next, compute `t' = HMAC-SHA256(header || payload || len || 0)`, where
-`0` denotes a single zero byte, and `len` is
-
-```
-le64(nbytes(header)) || le64(nbytes(payload))
-```
+`0` denotes a single zero byte, and `len` is `le64(nbytes(header)) ||
+le64(nbytes(payload))`.
 
 Verify in constant time that `t' = t`; if not, erase `payload` and
 report a forgery.  Otherwise, return `payload`.
