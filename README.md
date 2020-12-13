@@ -182,10 +182,9 @@ nomenclature) is either
 
 In principle, a badly designed U2F device could expose the public key
 in the credential id.  I don't know of any that do this, and it would
-be quite a waste of space since for a credential id since the
-credential id already has to determine a ~256-bit private key and have
-a ~128-bit authenticator on it, and a public key is usually at least 32
-bytes long.
+be quite a waste of space -- the credential id already has to determine
+a ~256-bit private key, and usually has a ~128-bit authenticator on it;
+on top of that, a public key is usually at least 32 bytes long.
 
 That said, like all U2F-based systems, you should use fidocrypt as one
 factor in multi-factor authentication -- use it to encrypt a single
@@ -211,7 +210,7 @@ could be a vector for timing side channel attacks.  There are two weak
 mitigations for timing side channel attacks on the arithmetic:
 
 1. The vulnerable arithmetic is computed only once at registration time
-   and once at each login.  Thus, an adversary not in control of the
+   and once at each signin.  Thus, an adversary not in control of the
    user's device has limited opportunities to repeat measurements to
    refine a statistical model of the secrets -- it's only when the user
    chooses to sign in.
