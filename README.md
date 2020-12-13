@@ -207,13 +207,19 @@ software storage device or similar.
 The ECDSA public key recovery in this implementation of fidocrypt is
 computed in Python with variable-time arbitrary-precision integer
 arithmetic.  Such an approach is obviously suboptimal, and certainly
-could be a vector for timing side channel attacks.
+could be a vector for timing side channel attacks.  There are two weak
+mitigations for timing side channel attacks on the arithmetic:
 
-The side channel is weakly mitigated because the vulnerable arithmetic
-is computed only once during login.  Thus, an adversary not in control
-of the user's device has limited opportunities to repeat measurements
-to refine a statistical model of the secrets -- it's only when the user
-chooses to sign in.
+1. The vulnerable arithmetic is computed only once at registration time
+   and once at each login.  Thus, an adversary not in control of the
+   user's device has limited opportunities to repeat measurements to
+   refine a statistical model of the secrets -- it's only when the user
+   chooses to sign in.
+
+2. The key derived by the vulnerable arithmetic is used for only one
+   purpose -- to verify and decrypt a ciphertext stored on the server.
+   So it is useful to an adversary only if they also compromise the
+   ciphertext on the server.
 
 Timing side channel attacks are serious, and you might rightly choose a
 different implementation of fidocrypt on the basis of them.
