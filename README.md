@@ -51,6 +51,11 @@ I then:
   exposing the key directly, so that you can store the _same_ secret
   encrypted differently with many U2F devices.
 
+Other implementations of the same basic idea:
+
+- https://github.com/ctz/u2f-secret-storage
+- https://github.com/darkskiez/u2f-luks
+
 Usage example
 -------------
 
