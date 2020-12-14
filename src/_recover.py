@@ -42,7 +42,9 @@ def ecdsa_recover_pubkey(signature, message, curve, hashalg):
     # pyca doesn't provide a way to compute both coordinates of scalar
     # multiplication -- only the x coordinate.  So we verify the
     # signature to find the matching A for each of the two possible
-    # values of R.
+    # values of R, and we arrange it this way, rather than the usual
+    # r^{-1} (s * R - H(m) * B), in order to avoid having to compute
+    # more than one variable-base scalar multiplication.
     #
     r, s = decode_dss_signature(signature)
 
@@ -54,14 +56,14 @@ def ecdsa_recover_pubkey(signature, message, curve, hashalg):
     h = decode_be(hasher.finalize())            # H(m) as integer
     hs_ = (h * s_) % curve.n                    # H(m) s^{-1} * B
     hs_B = ec.derive_private_key(hs_, curve.pyca, backend=backend).public_key()
+    r_s = (r_ * s) % curve.n                    # r^{-1} s
+    P = ec.derive_private_key(r_s, curve.pyca, backend=backend)
 
     def recover(Rx, Ry):
         assert curve.equation(Rx, Ry)
         Rn = ec.EllipticCurvePublicNumbers(Rx, Ry, curve.pyca)
         R = Rn.public_key(backend=backend)
         R_hs_B = curve.sub(R, hs_B)             # R - H(m) s^{-1} * B
-        r_s = (r_ * s) % curve.n                # r^{-1} s
-        P = ec.derive_private_key(r_s, curve.pyca, backend=backend)
         ss = P.exchange(ec.ECDH(), R_hs_B)      # x(r^{-1} s (R - ...))
         Ax = decode_be(ss)
         Ay = curve.recover_y(Ax)
