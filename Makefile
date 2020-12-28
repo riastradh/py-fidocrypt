@@ -28,6 +28,8 @@ env: .PHONY
 	$(SHELL)
 
 clean: .PHONY
+	-rm -f src/version.py
+	-rm -rf .pytest_cache
 	-rm -rf build
 	-rm -rf dist
 	-rm -rf fidocrypt.egg-info
