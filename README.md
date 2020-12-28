@@ -32,6 +32,10 @@ cannot be made to work with EdDSA (Ed25519 or Ed448) or RSASSA-PSS.
 This Python implementation of fidocrypt is based on Yubico's
 [python-fido2](https://github.com/Yubico/python-fido2) library.
 
+A newer [C implementation](https://github.com/riastradh/fidocrypt) can
+also take advantage of the `hmac-secret` extension (but is nevertheless
+compatible with this one when `hmac-secret` is not available).
+
 #### [Protocol description](PROTOCOL.md)
 
 Credit: I first learned about this technique from Joseph Birr-Paxton's
